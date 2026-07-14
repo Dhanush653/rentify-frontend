@@ -1,5 +1,0 @@
-export { default as PropertyCard } from './PropertyCard'
-export { default as PropertyFeatures } from './PropertyFeatures'
-export { default as PropertyForm } from './PropertyForm'
-export { default as PropertyGallery } from './PropertyGallery'
-export { default as PropertyLocation } from './PropertyLocation'
