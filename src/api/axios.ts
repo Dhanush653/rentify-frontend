@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { STORAGE_KEYS } from '@/utils/constants'
-import { storage } from '@/utils/storage'
+import { ROUTES } from '@/utils/constants'
+import { getToken, removeToken } from '@/utils/storage'
 
 /** Shared axios instance. Every *Api module builds on this. */
 export const api = axios.create({
@@ -12,7 +12,7 @@ export const api = axios.create({
 
 // Attach the bearer token to every outgoing request.
 api.interceptors.request.use((config) => {
-  const token = storage.get<string>(STORAGE_KEYS.TOKEN)
+  const token = getToken()
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
@@ -21,10 +21,20 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// TODO: handle 401 (sign out + redirect) and normalise errors once auth is wired up.
+// On 401 the session is dead: drop the token and bounce to /login.
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error),
+  (error) => {
+    if (error.response?.status === 401) {
+      removeToken()
+
+      if (window.location.pathname !== ROUTES.LOGIN) {
+        window.location.assign(ROUTES.LOGIN)
+      }
+    }
+
+    return Promise.reject(error)
+  },
 )
 
 export default api

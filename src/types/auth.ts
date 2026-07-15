@@ -1,17 +1,24 @@
-import type { User } from './user'
+import type { ApiResponse } from './api'
 
+/** Payload for POST /api/auth/login */
 export interface LoginRequest {
-  email: string
+  phoneNumber: string
   password: string
 }
 
+/** Payload for POST /api/auth/register */
 export interface RegisterRequest {
-  name: string
-  email: string
+  fullName: string
+  phoneNumber: string
   password: string
 }
 
-export interface AuthResponse {
+/** The `data` object the auth endpoints return on success. */
+export interface AuthData {
   token: string
-  user: User
+  fullName: string
+  phoneNumber: string
 }
+
+/** Full backend envelope, e.g. { status, message, data: { token, ... } }. */
+export type AuthResponse = ApiResponse<AuthData>

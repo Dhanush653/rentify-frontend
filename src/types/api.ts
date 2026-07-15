@@ -1,6 +1,6 @@
-/** Envelope returned by the Rentify backend. */
+/** Envelope returned by the Rentify backend, e.g. { status, message, data }. */
 export interface ApiResponse<T> {
-  success: boolean
+  status: number
   message: string
   data: T
 }
