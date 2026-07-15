@@ -51,6 +51,9 @@ export interface PropertyListItem {
   area: string
   propertyType: PropertyType
   thumbnail: string
+  bedRooms: number
+  bathRooms: number
+  isParkingAvailable: boolean
 }
 
 /** Query parameters accepted by GET /api/properties. */
@@ -106,6 +109,8 @@ export interface CreatePropertyFormValues {
   latitude: number
   longitude: number
   features: PropertyFeatures
+  /** ISO LocalDateTime when the listing expires (derived from the chosen plan). */
+  expiresAt: string
 }
 
 /** Geographic coordinates chosen on the map. */
@@ -126,6 +131,7 @@ export interface PropertyDetails {
   propertyType: PropertyType
   ownerName: string
   ownerPhone: string
+  whatsAppNumber?: string
   imageUrls: string[]
   viewCount: number
   contactCount: number

@@ -7,6 +7,7 @@ const PropertyCardSkeleton = () => (
     <div className="p-5">
       <Skeleton variant="text" width="80%" height={26} />
       <Skeleton variant="text" width="55%" height={20} />
+      <Skeleton variant="text" width="65%" height={20} />
       <div className="mt-3 border-t border-slate-100 pt-3">
         <Skeleton variant="text" width="40%" height={20} />
       </div>

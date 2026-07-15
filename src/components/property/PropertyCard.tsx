@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin } from 'lucide-react'
+import { ArrowRight, Bath, BedDouble, Car, MapPin } from 'lucide-react'
 import { ROUTES } from '@/utils/constants'
 import { buildPath, formatCurrency, humanizeEnum } from '@/utils/helpers'
 import type { PropertyListItem } from '@/types/property'
@@ -47,6 +47,23 @@ const PropertyCard = ({ property }: PropertyCardProps) => (
         <span className="truncate text-sm">
           {property.area}, {property.city}
         </span>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
+        <span className="flex items-center gap-1.5">
+          <BedDouble className="h-4 w-4 text-slate-400" aria-hidden="true" />
+          {property.bedRooms} {property.bedRooms === 1 ? 'Bed' : 'Beds'}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Bath className="h-4 w-4 text-slate-400" aria-hidden="true" />
+          {property.bathRooms} {property.bathRooms === 1 ? 'Bath' : 'Baths'}
+        </span>
+        {property.isParkingAvailable && (
+          <span className="flex items-center gap-1.5">
+            <Car className="h-4 w-4 text-slate-400" aria-hidden="true" />
+            Parking
+          </span>
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">

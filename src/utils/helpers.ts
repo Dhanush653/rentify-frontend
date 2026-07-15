@@ -16,6 +16,23 @@ export const formatDate = (value: string | Date): string =>
     year: 'numeric',
   }).format(new Date(value))
 
+/** Build a wa.me deep link; assumes a 10-digit number is Indian (prefixes 91). */
+export const whatsappLink = (number: string, message?: string): string => {
+  const digits = number.replace(/\D/g, '')
+  const withCountryCode = digits.length === 10 ? `91${digits}` : digits
+  const base = `https://wa.me/${withCountryCode}`
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base
+}
+
+/** Format a Date as a Spring-friendly LocalDateTime string (no timezone). */
+export const toLocalDateTimeString = (date: Date): string => {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return (
+    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
+    `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+  )
+}
+
 /** Turn a backend enum like SEMI_FURNISHED into a readable "Semi Furnished". */
 export const humanizeEnum = (value: string): string =>
   value

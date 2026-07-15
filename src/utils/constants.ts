@@ -45,5 +45,12 @@ export const WATER_SUPPLY_TYPES = ['CORPORATION', 'BOREWELL', 'BOTH'] as const
 /** Bounds for the Home page rent range slider. */
 export const RENT_RANGE = { MIN: 0, MAX: 100000, STEP: 1000 } as const
 
+/** Paid listing durations and their price (INR). */
+export const LISTING_PLANS = [
+  { days: 30, price: 500 },
+  { days: 60, price: 800 },
+  { days: 90, price: 1100 },
+] as const
+
 /** Accepted image MIME types for property photo uploads. */
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']

@@ -9,6 +9,7 @@ import Seo from '@/components/common/Seo'
 import PropertyForm from '@/components/property/PropertyForm'
 import { ROUTES } from '@/utils/constants'
 import { buildPath } from '@/utils/helpers'
+import { openRazorpayCheckout, PaymentError } from '@/utils/razorpay'
 import type { ApiError } from '@/types/api'
 import type { CreatePropertyFormValues } from '@/types/property'
 
@@ -16,10 +17,29 @@ const CreatePropertyPage = () => {
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (values: CreatePropertyFormValues, files: File[]) => {
+  const handleSubmit = async (
+    values: CreatePropertyFormValues,
+    files: File[],
+    amount: number,
+  ) => {
     setIsSubmitting(true)
 
+    // 1) Collect payment first (Razorpay TEST checkout).
     try {
+      await openRazorpayCheckout({
+        amount,
+        description: `Rentify listing — ${values.title || 'New property'}`,
+      })
+    } catch (error) {
+      const message = error instanceof PaymentError ? error.message : 'Payment failed'
+      toast.error(message)
+      setIsSubmitting(false)
+      return
+    }
+
+    // 2) Payment succeeded → create the property.
+    try {
+      toast.success('Payment successful')
       const id = await propertyApi.createProperty(values, files)
       toast.success('Property posted successfully')
       navigate(buildPath(ROUTES.PROPERTY_DETAILS, { id }))

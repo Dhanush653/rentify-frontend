@@ -16,11 +16,12 @@ import {
 } from '@mui/material'
 import {
   FURNISHING_TYPES,
+  LISTING_PLANS,
   PREFERRED_TENANTS,
   PROPERTY_TYPES,
   WATER_SUPPLY_TYPES,
 } from '@/utils/constants'
-import { humanizeEnum } from '@/utils/helpers'
+import { formatCurrency, humanizeEnum, toLocalDateTimeString } from '@/utils/helpers'
 import ImageUploader from '@/components/property/ImageUploader'
 import LocationPicker from '@/components/property/LocationPicker'
 import type { CreatePropertyFormValues, PropertyFeatures } from '@/types/property'
@@ -58,6 +59,7 @@ const DEFAULTS: FormValues = {
     cctv: false,
     petFriendly: false,
   },
+  expiresAt: '',
 }
 
 const BASIC_NUMBER_FIELDS = [
@@ -186,9 +188,9 @@ const SwitchField = ({
 
 export interface PropertyFormProps {
   defaultValues?: Partial<CreatePropertyFormValues>
-  onSubmit: (values: CreatePropertyFormValues, files: File[]) => void | Promise<void>
+  /** `amount` is the chosen listing plan's price (INR), for payment. */
+  onSubmit: (values: CreatePropertyFormValues, files: File[], amount: number) => void | Promise<void>
   isSubmitting?: boolean
-  submitLabel?: string
 }
 
 /** Shared by CreatePropertyPage and EditPropertyPage. */
@@ -196,9 +198,11 @@ const PropertyForm = ({
   defaultValues,
   onSubmit,
   isSubmitting = false,
-  submitLabel = 'Post Property',
 }: PropertyFormProps) => {
   const [files, setFiles] = useState<File[]>([])
+  const [durationDays, setDurationDays] = useState<number>(LISTING_PLANS[0].days)
+
+  const selectedPlan = LISTING_PLANS.find((plan) => plan.days === durationDays) ?? LISTING_PLANS[0]
 
   const {
     register,
@@ -219,7 +223,11 @@ const PropertyForm = ({
     return errors.features?.[key]?.message
   }
 
-  const submit = handleSubmit((values) => onSubmit(values, files))
+  const submit = handleSubmit((values) => {
+    const expires = new Date()
+    expires.setDate(expires.getDate() + durationDays)
+    onSubmit({ ...values, expiresAt: toLocalDateTimeString(expires) }, files, selectedPlan.price)
+  })
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
@@ -421,9 +429,39 @@ const PropertyForm = ({
         <ImageUploader files={files} onChange={setFiles} />
       </Section>
 
+      <Section
+        step={6}
+        title="Listing Plan"
+        subtitle="Choose how long your listing stays active. Payment is required to publish."
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <TextField
+            select
+            label="Duration"
+            value={durationDays}
+            onChange={(event) => setDurationDays(Number(event.target.value))}
+            fullWidth
+            size="small"
+          >
+            {LISTING_PLANS.map((plan) => (
+              <MenuItem key={plan.days} value={plan.days}>
+                {plan.days} days — {formatCurrency(plan.price)}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
+            <span className="text-sm text-slate-500">Amount payable</span>
+            <span className="text-lg font-bold text-slate-900">
+              {formatCurrency(selectedPlan.price)}
+            </span>
+          </div>
+        </div>
+      </Section>
+
       <div className="sticky bottom-4 z-10 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur">
         <p className="hidden text-sm text-slate-500 sm:block">
-          Review the details, then publish your listing.
+          Pay securely to publish your {durationDays}-day listing.
         </p>
         <Button
           type="submit"
@@ -432,7 +470,11 @@ const PropertyForm = ({
           disabled={isSubmitting}
           sx={{ px: 4, py: 1.25, width: { xs: '100%', sm: 'auto' } }}
         >
-          {isSubmitting ? <CircularProgress size={24} color="inherit" /> : submitLabel}
+          {isSubmitting ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            `Pay ${formatCurrency(selectedPlan.price)} & Publish`
+          )}
         </Button>
       </div>
     </form>

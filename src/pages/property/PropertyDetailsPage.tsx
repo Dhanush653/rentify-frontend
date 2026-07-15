@@ -22,7 +22,7 @@ import PropertyAmenities from '@/components/property/PropertyAmenities'
 import PropertyFeatures from '@/components/property/PropertyFeatures'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyMap from '@/components/property/PropertyMap'
-import { formatCurrency, formatDate, humanizeEnum } from '@/utils/helpers'
+import { formatCurrency, formatDate, humanizeEnum, whatsappLink } from '@/utils/helpers'
 import type { PropertyDetails } from '@/types/property'
 
 /** A titled white card used for each content section. */
@@ -191,6 +191,25 @@ const PropertyDetailsPage = () => {
             >
               Contact Owner
             </Button>
+
+            {property.whatsAppNumber && (
+              <Button
+                component="a"
+                href={whatsappLink(
+                  property.whatsAppNumber,
+                  `Hi, I'm interested in "${property.title}" listed on Rentify.`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outlined"
+                size="large"
+                fullWidth
+                startIcon={<MessageCircle size={18} />}
+                sx={{ mt: 1.5, py: 1.25 }}
+              >
+                Chat on WhatsApp
+              </Button>
+            )}
 
             <div className="my-5 h-px bg-slate-200" />
 
