@@ -4,10 +4,10 @@ import Navbar from '@/components/layout/Navbar'
 
 /** App shell: Navbar + routed page + Footer. */
 const Layout = () => (
-  <div className="flex min-h-screen flex-col bg-gray-50">
+  <div className="flex min-h-screen flex-col bg-slate-50">
     <Navbar />
 
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <Outlet />
     </main>
 

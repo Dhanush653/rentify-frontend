@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { AxiosError } from 'axios'
 import { propertyApi } from '@/api/propertyApi'
+import PageContainer from '@/components/common/PageContainer'
+import PageHeader from '@/components/common/PageHeader'
+import Seo from '@/components/common/Seo'
 import PropertyForm from '@/components/property/PropertyForm'
 import { ROUTES } from '@/utils/constants'
 import { buildPath } from '@/utils/helpers'
@@ -34,16 +37,18 @@ const CreatePropertyPage = () => {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">Post a property</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Fill in the details below to list your property for rent.
-        </p>
-      </div>
+    <PageContainer width="narrow" className="flex flex-col gap-6">
+      <Seo
+        title="Post Your Property | Rentify"
+        description="List your house or shop for rent on Rentify in a few simple steps."
+      />
+      <PageHeader
+        title="Post a property"
+        subtitle="Fill in the details below to list your property for rent."
+      />
 
       <PropertyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-    </section>
+    </PageContainer>
   )
 }
 

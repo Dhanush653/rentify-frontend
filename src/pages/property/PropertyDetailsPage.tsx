@@ -1,14 +1,47 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Alert, Button, Chip, Divider, Paper, Typography } from '@mui/material'
-import { ArrowLeft, Eye, MapPin, MessageCircle, Phone, User } from 'lucide-react'
+import { Button } from '@mui/material'
+import {
+  ArrowLeft,
+  Bath,
+  BedDouble,
+  Eye,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Ruler,
+  Sofa,
+  User,
+  type LucideIcon,
+} from 'lucide-react'
 import { propertyApi } from '@/api/propertyApi'
-import Loader from '@/components/common/Loader'
+import ErrorState from '@/components/common/ErrorState'
+import Seo from '@/components/common/Seo'
+import PropertyDetailsSkeleton from '@/components/skeletons/PropertyDetailsSkeleton'
 import PropertyFeatures from '@/components/property/PropertyFeatures'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyMap from '@/components/property/PropertyMap'
 import { formatCurrency, formatDate, humanizeEnum } from '@/utils/helpers'
 import type { PropertyDetails } from '@/types/property'
+
+/** A titled white card used for each content section. */
+const Card = ({ title, children }: { title: string; children: ReactNode }) => (
+  <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+    <h2 className="mb-4 text-lg font-bold text-slate-900">{title}</h2>
+    {children}
+  </section>
+)
+
+/** A single stat in the quick-specs strip. */
+const Spec = ({ icon: Icon, value, label }: { icon: LucideIcon; value: ReactNode; label: string }) => (
+  <div className="flex items-center gap-3 px-4 py-3">
+    <Icon className="h-5 w-5 flex-shrink-0 text-blue-600" aria-hidden="true" />
+    <div className="min-w-0">
+      <p className="truncate text-sm font-semibold text-slate-900">{value}</p>
+      <p className="text-xs text-slate-500">{label}</p>
+    </div>
+  </div>
+)
 
 const PropertyDetailsPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -40,27 +73,21 @@ const PropertyDetailsPage = () => {
     fetchProperty()
   }, [fetchProperty])
 
-  if (loading) {
-    return <Loader label="Loading property..." />
-  }
+  if (loading) return <PropertyDetailsSkeleton />
 
   if (error || !property) {
     return (
       <div className="flex flex-col gap-4">
-        <Alert
-          severity="error"
-          action={
-            <Button color="inherit" size="small" onClick={fetchProperty}>
-              Retry
-            </Button>
-          }
-        >
-          {error ?? 'Property not found.'}
-        </Alert>
+        <Seo title="Property not found | Rentify" />
+        <ErrorState
+          title="Property unavailable"
+          message={error ?? 'This property could not be found.'}
+          onRetry={fetchProperty}
+        />
         <Button
           onClick={() => navigate(-1)}
           startIcon={<ArrowLeft size={16} />}
-          sx={{ textTransform: 'none', alignSelf: 'flex-start' }}
+          sx={{ alignSelf: 'center' }}
         >
           Go back
         </Button>
@@ -68,57 +95,85 @@ const PropertyDetailsPage = () => {
     )
   }
 
-  return (
-    <section className="flex flex-col gap-6">
-      <Button
-        onClick={() => navigate(-1)}
-        startIcon={<ArrowLeft size={16} />}
-        sx={{ textTransform: 'none', alignSelf: 'flex-start' }}
-      >
-        Back
-      </Button>
+  const { features } = property
 
-      {/* Gallery + summary: two columns on desktop, single on mobile */}
+  return (
+    <div className="flex flex-col gap-6">
+      <Seo
+        title={`${property.title} | Rentify`}
+        description={`${humanizeEnum(property.propertyType)} for rent in ${property.area}, ${property.city} at ${formatCurrency(property.rent)}/month.`}
+      />
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="flex w-fit items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        Back to listings
+      </button>
+
+      {/* Title */}
+      <div className="flex flex-col gap-2">
+        <span className="w-fit rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+          {humanizeEnum(property.propertyType)}
+        </span>
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          {property.title}
+        </h1>
+        <div className="flex items-center gap-1.5 text-slate-500">
+          <MapPin className="h-4 w-4" aria-hidden="true" />
+          <span className="text-sm">
+            {property.area}, {property.city}
+          </span>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        {/* Left */}
+        <div className="flex flex-col gap-6 lg:col-span-2">
           <PropertyGallery images={property.imageUrls ?? []} title={property.title} />
+
+          {/* Quick specs */}
+          <div className="grid grid-cols-2 divide-slate-200 rounded-2xl border border-slate-200 bg-white sm:grid-cols-4 sm:divide-x">
+            <Spec icon={BedDouble} value={features.bedrooms} label="Bedrooms" />
+            <Spec icon={Bath} value={features.bathrooms} label="Bathrooms" />
+            <Spec icon={Ruler} value={`${features.builtUpArea} sq.ft`} label="Built-up" />
+            <Spec icon={Sofa} value={humanizeEnum(features.furnishingType)} label="Furnishing" />
+          </div>
+
+          <Card title="Description">
+            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+              {property.description || 'No description provided.'}
+            </p>
+          </Card>
+
+          <Card title="Features & Amenities">
+            <PropertyFeatures features={property.features} />
+          </Card>
+
+          <Card title="Location">
+            <PropertyMap
+              latitude={property.latitude}
+              longitude={property.longitude}
+              title={property.title}
+              area={property.area}
+              city={property.city}
+            />
+          </Card>
         </div>
 
+        {/* Right: sticky contact card */}
         <aside className="lg:col-span-1">
-          <Paper
-            elevation={0}
-            sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: 3, border: '1px solid #e5e7eb' }}
-          >
-            <Chip
-              label={humanizeEnum(property.propertyType)}
-              size="small"
-              color="primary"
-              variant="outlined"
-            />
-
-            <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mt: 1.5 }}>
-              {property.title}
-            </Typography>
-
-            <div className="mt-1 flex items-center gap-1 text-gray-500">
-              <MapPin className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <Typography variant="body2" color="text.secondary">
-                {property.area}, {property.city}
-              </Typography>
-            </div>
-
-            <div className="mt-4">
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#4f46e5' }}>
+          <div className="lg:sticky lg:top-24 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-extrabold text-slate-900">
                 {formatCurrency(property.rent)}
-                <Typography component="span" variant="body2" color="text.secondary">
-                  {' '}
-                  / month
-                </Typography>
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Deposit: {formatCurrency(property.deposit)}
-              </Typography>
+              </span>
+              <span className="text-sm text-slate-500">/ month</span>
             </div>
+            <p className="mt-1 text-sm text-slate-500">
+              Deposit <span className="font-semibold text-slate-700">{formatCurrency(property.deposit)}</span>
+            </p>
 
             <Button
               component="a"
@@ -127,84 +182,53 @@ const PropertyDetailsPage = () => {
               size="large"
               fullWidth
               startIcon={<Phone size={18} />}
-              sx={{ textTransform: 'none', mt: 3, py: 1.25 }}
+              sx={{ mt: 3, py: 1.25 }}
             >
               Contact Owner
             </Button>
 
-            <Divider sx={{ my: 2.5 }} />
+            <div className="my-5 h-px bg-slate-200" />
 
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-gray-700">
-                <User className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                <Typography variant="body2">{property.ownerName}</Typography>
+            {/* Owner */}
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500">
+                <User className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-slate-900">{property.ownerName}</p>
+                <a href={`tel:${property.ownerPhone}`} className="text-xs text-blue-600 hover:underline">
+                  {property.ownerPhone}
+                </a>
               </div>
-              <a
-                href={`tel:${property.ownerPhone}`}
-                className="flex items-center gap-2 text-gray-700 hover:text-indigo-600"
-              >
-                <Phone className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                <Typography variant="body2">{property.ownerPhone}</Typography>
-              </a>
             </div>
 
-            <Divider sx={{ my: 2.5 }} />
-
-            <div className="flex items-center justify-between text-gray-500">
-              <span className="flex items-center gap-1.5 text-sm">
-                <Eye className="h-4 w-4" aria-hidden="true" />
-                {property.viewCount} views
-              </span>
-              <span className="flex items-center gap-1.5 text-sm">
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                {property.contactCount} contacts
-              </span>
+            {/* Stats */}
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-slate-200 p-3">
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                  <span className="text-xs">Views</span>
+                </div>
+                <p className="mt-1 text-lg font-bold text-slate-900">{property.viewCount}</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-3">
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  <span className="text-xs">Contacts</span>
+                </div>
+                <p className="mt-1 text-lg font-bold text-slate-900">{property.contactCount}</p>
+              </div>
             </div>
 
             {property.createdAt && (
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+              <p className="mt-5 text-center text-xs text-slate-400">
                 Listed on {formatDate(property.createdAt)}
-              </Typography>
+              </p>
             )}
-          </Paper>
+          </div>
         </aside>
       </div>
-
-      {/* Description */}
-      <Paper
-        elevation={0}
-        sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 3, border: '1px solid #e5e7eb' }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5 }}>
-          Description
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
-          {property.description || 'No description provided.'}
-        </Typography>
-      </Paper>
-
-      {/* Features */}
-      <div>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-          Features & Amenities
-        </Typography>
-        <PropertyFeatures features={property.features} />
-      </div>
-
-      {/* Location map (below the details) */}
-      <div>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-          Location
-        </Typography>
-        <PropertyMap
-          latitude={property.latitude}
-          longitude={property.longitude}
-          title={property.title}
-          area={property.area}
-          city={property.city}
-        />
-      </div>
-    </section>
+    </div>
   )
 }
 

@@ -5,9 +5,9 @@ export interface PropertyGridProps {
   properties: PropertyListItem[]
 }
 
-/** Responsive grid of PropertyCards: 1 col mobile, 2 tablet, 3–4 desktop. */
+/** Responsive grid of PropertyCards: 1 col mobile, 2 tablet, 3 desktop. */
 const PropertyGrid = ({ properties }: PropertyGridProps) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {properties.map((property) => (
       <PropertyCard key={property.id} property={property} />
     ))}

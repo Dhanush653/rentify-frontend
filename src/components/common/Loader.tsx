@@ -5,9 +5,9 @@ export interface LoaderProps {
 }
 
 const Loader = ({ label = 'Loading...' }: LoaderProps) => (
-  <div className="flex items-center justify-center gap-2 py-10 text-gray-500">
-    <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-    <span className="text-sm">{label}</span>
+  <div className="flex flex-col items-center justify-center gap-3 py-20 text-slate-500">
+    <Loader2 className="h-7 w-7 animate-spin text-blue-600" aria-hidden="true" />
+    <span className="text-sm font-medium">{label}</span>
   </div>
 )
 

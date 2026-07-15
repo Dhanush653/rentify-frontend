@@ -1,5 +1,5 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
-import '@/utils/leaflet'
+import { markerIconDefault } from '@/utils/leaflet'
 
 export interface PropertyMapProps {
   latitude: number
@@ -24,7 +24,7 @@ const PropertyMap = ({ latitude, longitude, title, area, city }: PropertyMapProp
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
+        <Marker position={position} icon={markerIconDefault}>
           <Popup>
             <span className="font-semibold">{title}</span>
             <br />

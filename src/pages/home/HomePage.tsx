@@ -1,17 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, Button } from '@mui/material'
 import { propertyApi } from '@/api/propertyApi'
 import EmptyState from '@/components/common/EmptyState'
-import Loader from '@/components/common/Loader'
+import ErrorState from '@/components/common/ErrorState'
+import Seo from '@/components/common/Seo'
 import PropertyGrid from '@/components/property/PropertyGrid'
+import PropertyGridSkeleton from '@/components/skeletons/PropertyGridSkeleton'
 import SearchBar from '@/components/property/SearchBar'
 import type { PropertyListItem, PropertySearchRequest } from '@/types/property'
+
+const FILTERS_KEY = 'rentify.search'
+
+/** Persist the applied filters so they survive back-navigation. */
+const loadFilters = (): PropertySearchRequest => {
+  try {
+    return JSON.parse(sessionStorage.getItem(FILTERS_KEY) ?? '{}') as PropertySearchRequest
+  } catch {
+    return {}
+  }
+}
 
 const HomePage = () => {
   const [properties, setProperties] = useState<PropertyListItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [filters, setFilters] = useState<PropertySearchRequest>({})
+  const [filters, setFilters] = useState<PropertySearchRequest>(loadFilters)
 
   const fetchProperties = useCallback(async (search: PropertySearchRequest) => {
     setLoading(true)
@@ -28,38 +40,26 @@ const HomePage = () => {
     }
   }, [])
 
-  // Data-fetching effect: re-runs whenever the search filters change.
-  // The synchronous setLoading(true) inside is intentional (show the loader at once).
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProperties(filters)
   }, [filters, fetchProperties])
 
-  const renderResults = () => {
-    if (loading) {
-      return <Loader label="Loading properties..." />
-    }
+  const handleSearch = useCallback((next: PropertySearchRequest) => {
+    sessionStorage.setItem(FILTERS_KEY, JSON.stringify(next))
+    setFilters(next)
+  }, [])
 
-    if (error) {
-      return (
-        <Alert
-          severity="error"
-          action={
-            <Button color="inherit" size="small" onClick={() => fetchProperties(filters)}>
-              Retry
-            </Button>
-          }
-        >
-          {error}
-        </Alert>
-      )
-    }
+  const renderResults = () => {
+    if (loading) return <PropertyGridSkeleton />
+
+    if (error) return <ErrorState message={error} onRetry={() => fetchProperties(filters)} />
 
     if (properties.length === 0) {
       return (
         <EmptyState
           title="No properties found"
-          description="Try adjusting your search filters to see more results."
+          description="Try adjusting your filters to see more results."
         />
       )
     }
@@ -68,20 +68,24 @@ const HomePage = () => {
   }
 
   return (
-    <section className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-          Find your next home
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Browse rental properties across the city.
-        </p>
+    <>
+      <Seo
+        title="Rentify | Find Rental Houses and Shops"
+        description="Browse verified rental homes and shops across the city. Search by location, type and budget on Rentify."
+      />
+
+      <div className="flex flex-col gap-6">
+        <SearchBar onSearch={handleSearch} loading={loading} initialFilters={filters} />
+
+        {!loading && !error && properties.length > 0 && (
+          <p className="text-sm text-slate-500">
+            {properties.length} {properties.length === 1 ? 'property' : 'properties'} found
+          </p>
+        )}
+
+        {renderResults()}
       </div>
-
-      <SearchBar onSearch={setFilters} loading={loading} />
-
-      {renderResults()}
-    </section>
+    </>
   )
 }
 

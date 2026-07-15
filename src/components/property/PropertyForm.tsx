@@ -11,10 +11,8 @@ import {
   CircularProgress,
   FormControlLabel,
   MenuItem,
-  Paper,
   Switch,
   TextField,
-  Typography,
 } from '@mui/material'
 import {
   FURNISHING_TYPES,
@@ -85,33 +83,34 @@ const AMENITY_SWITCHES = [
   { name: 'features.petFriendly', label: 'Pet Friendly' },
 ] as const
 
-/** A titled card wrapping one logical group of fields. */
+/** A numbered card wrapping one logical group of fields. */
 const Section = ({
+  step,
   title,
   subtitle,
   children,
 }: {
+  step: number
   title: string
   subtitle?: string
   children: ReactNode
 }) => (
-  <Paper elevation={0} sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 3, border: '1px solid #e5e7eb' }}>
-    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-      {title}
-    </Typography>
-    {subtitle && (
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        {subtitle}
-      </Typography>
-    )}
-    <div className={subtitle ? '' : 'mt-4'}>{children}</div>
-  </Paper>
+  <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+    <div className="flex items-start gap-3">
+      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg bg-blue-50 text-sm font-bold text-blue-600">
+        {step}
+      </span>
+      <div>
+        <h2 className="text-base font-bold text-slate-900">{title}</h2>
+        {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
+      </div>
+    </div>
+    <div className="mt-5">{children}</div>
+  </section>
 )
 
 const GroupLabel = ({ children }: { children: ReactNode }) => (
-  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1.5 }}>
-    {children}
-  </Typography>
+  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{children}</p>
 )
 
 /** Controller-backed MUI dropdown; options map to backend enum values. */
@@ -224,7 +223,7 @@ const PropertyForm = ({
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
-      <Section title="Basic Information" subtitle="Tell renters what you're offering.">
+      <Section step={1} title="Basic Information" subtitle="Tell renters what you're offering.">
         <div className="flex flex-col gap-4">
           <TextField
             {...register('title')}
@@ -255,7 +254,7 @@ const PropertyForm = ({
         </div>
       </Section>
 
-      <Section title="Pricing" subtitle="Monthly rent and one-time deposit.">
+      <Section step={2} title="Pricing" subtitle="Monthly rent and one-time deposit.">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
             {...register('rent', { valueAsNumber: true })}
@@ -278,7 +277,7 @@ const PropertyForm = ({
         </div>
       </Section>
 
-      <Section title="Location" subtitle="Search or click the map to drop a pin.">
+      <Section step={3} title="Location" subtitle="Search or click the map to drop a pin.">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
             {...register('city')}
@@ -329,7 +328,7 @@ const PropertyForm = ({
         </div>
       </Section>
 
-      <Section title="Property Features">
+      <Section step={4} title="Property Features">
         <div className="flex flex-col gap-6">
           <div>
             <GroupLabel>Basic</GroupLabel>
@@ -418,17 +417,20 @@ const PropertyForm = ({
         </div>
       </Section>
 
-      <Section title="Images" subtitle="Upload one or more photos of the property.">
+      <Section step={5} title="Images" subtitle="Upload one or more photos of the property.">
         <ImageUploader files={files} onChange={setFiles} />
       </Section>
 
-      <div className="flex justify-end">
+      <div className="sticky bottom-4 z-10 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur">
+        <p className="hidden text-sm text-slate-500 sm:block">
+          Review the details, then publish your listing.
+        </p>
         <Button
           type="submit"
           variant="contained"
           size="large"
           disabled={isSubmitting}
-          sx={{ textTransform: 'none', px: 4, py: 1.25 }}
+          sx={{ px: 4, py: 1.25, width: { xs: '100%', sm: 'auto' } }}
         >
           {isSubmitting ? <CircularProgress size={24} color="inherit" /> : submitLabel}
         </Button>

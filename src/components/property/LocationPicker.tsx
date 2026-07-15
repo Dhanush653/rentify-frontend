@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import { Autocomplete, TextField, Typography } from '@mui/material'
-import '@/utils/leaflet'
+import { markerIconDefault } from '@/utils/leaflet'
 import type { LatLng } from '@/types/property'
 
 /** Centre of India — a sensible default view before a location is picked. */
@@ -137,7 +137,7 @@ const LocationPicker = ({ value, onChange, error }: LocationPickerProps) => {
           />
           <RecenterMap center={center} zoom={zoom} />
           <ClickHandler onClick={handleMapClick} />
-          {markerPosition && <Marker position={markerPosition} />}
+          {markerPosition && <Marker position={markerPosition} icon={markerIconDefault} />}
         </MapContainer>
       </div>
 
