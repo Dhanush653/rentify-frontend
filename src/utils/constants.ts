@@ -30,10 +30,20 @@ export const STORAGE_KEYS = {
   USER: 'rentify.user',
 } as const
 
-export const PROPERTY_TYPES = [
-  { value: 'APARTMENT', label: 'Apartment' },
-  { value: 'HOUSE', label: 'House' },
-  { value: 'VILLA', label: 'Villa' },
-  { value: 'STUDIO', label: 'Studio' },
-  { value: 'PG', label: 'PG / Co-living' },
-] as const
+/**
+ * Enum option lists for the property form. Values match the backend enums
+ * exactly; labels are derived for display via `humanizeEnum`.
+ */
+export const PROPERTY_TYPES = ['HOUSE', 'SHOP'] as const
+
+export const FURNISHING_TYPES = ['UNFURNISHED', 'SEMI_FURNISHED', 'FULLY_FURNISHED'] as const
+
+export const PREFERRED_TENANTS = ['ANY', 'FAMILY', 'BACHELOR'] as const
+
+export const WATER_SUPPLY_TYPES = ['CORPORATION', 'BOREWELL', 'BOTH'] as const
+
+/** Bounds for the Home page rent range slider. */
+export const RENT_RANGE = { MIN: 0, MAX: 100000, STEP: 1000 } as const
+
+/** Accepted image MIME types for property photo uploads. */
+export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']

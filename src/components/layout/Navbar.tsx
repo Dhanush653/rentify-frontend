@@ -8,8 +8,8 @@ import { cn } from '@/utils/helpers'
 
 const authedLinks = [
   { to: ROUTES.HOME, label: 'Home' },
-  { to: ROUTES.MY_PROPERTIES, label: 'My Properties' },
   { to: ROUTES.CREATE_PROPERTY, label: 'Post Property' },
+  { to: ROUTES.MY_PROPERTIES, label: 'My Properties' },
   { to: ROUTES.PROFILE, label: 'Profile' },
 ]
 

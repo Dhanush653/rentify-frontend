@@ -2,12 +2,15 @@ import axios from 'axios'
 import { ROUTES } from '@/utils/constants'
 import { getToken, removeToken } from '@/utils/storage'
 
-/** Shared axios instance. Every *Api module builds on this. */
+/**
+ * Shared axios instance. Every *Api module builds on this.
+ *
+ * We intentionally do NOT set a default Content-Type: axios infers
+ * `application/json` for JSON bodies and lets the browser set
+ * `multipart/form-data` (with its boundary) for FormData uploads.
+ */
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
 // Attach the bearer token to every outgoing request.
