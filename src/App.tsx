@@ -13,7 +13,7 @@ const App = () => (
         <ScrollToTop />
         <AppRoutes />
         <Toaster
-          position="top-right"
+          position="top-center"
           toastOptions={{
             style: { borderRadius: '10px', fontSize: '14px' },
             success: { iconTheme: { primary: '#2563eb', secondary: '#fff' } },

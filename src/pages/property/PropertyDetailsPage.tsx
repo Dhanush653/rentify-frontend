@@ -18,6 +18,7 @@ import { propertyApi } from '@/api/propertyApi'
 import ErrorState from '@/components/common/ErrorState'
 import Seo from '@/components/common/Seo'
 import PropertyDetailsSkeleton from '@/components/skeletons/PropertyDetailsSkeleton'
+import PropertyAmenities from '@/components/property/PropertyAmenities'
 import PropertyFeatures from '@/components/property/PropertyFeatures'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyMap from '@/components/property/PropertyMap'
@@ -147,8 +148,12 @@ const PropertyDetailsPage = () => {
             </p>
           </Card>
 
-          <Card title="Features & Amenities">
+          <Card title="Property Features">
             <PropertyFeatures features={property.features} />
+          </Card>
+
+          <Card title="Amenities">
+            <PropertyAmenities features={property.features} />
           </Card>
 
           <Card title="Location">

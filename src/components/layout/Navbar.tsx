@@ -17,15 +17,22 @@ const guestLinks = [{ to: ROUTES.HOME, label: 'Home' }]
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     'text-sm font-medium transition-colors',
-    isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900',
+    isActive ? 'text-white' : 'text-blue-100 hover:text-white',
   )
+
+// Glassy pill button that stays "continuous" with the blue header.
+const pillClass =
+  'inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-4 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 transition-colors hover:bg-white/25'
+
+const ghostClass =
+  'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-blue-100 transition-colors hover:bg-white/10 hover:text-white'
 
 const Brand = ({ onClick }: { onClick?: () => void }) => (
   <Link to={ROUTES.HOME} onClick={onClick} className="flex items-center gap-2.5">
-    <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-600 text-white">
+    <span className="grid h-9 w-9 place-items-center rounded-lg bg-white/15 text-white ring-1 ring-inset ring-white/25">
       <Building2 className="h-5 w-5" aria-hidden="true" />
     </span>
-    <span className="text-lg font-extrabold tracking-tight text-slate-900">{APP_NAME}</span>
+    <span className="text-lg font-extrabold tracking-tight text-white">{APP_NAME}</span>
   </Link>
 )
 
@@ -46,54 +53,39 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-blue-500/50 bg-blue-600">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Brand onClick={close} />
 
         {/* Desktop */}
-        <div className="hidden items-center gap-7 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           {links.map((link) => (
             <NavLink key={link.to} to={link.to} className={linkClass} end={link.to === ROUTES.HOME}>
               {link.label}
             </NavLink>
           ))}
 
-          <div className="ml-1 flex items-center gap-3">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to={ROUTES.CREATE_PROPERTY}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-                >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  Post Property
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
-                >
-                  <LogOut className="h-4 w-4" aria-hidden="true" />
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to={ROUTES.LOGIN}
-                  className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-                >
-                  Login
-                </Link>
-                <Link
-                  to={ROUTES.REGISTER}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
+          {isAuthenticated ? (
+            <>
+              <Link to={ROUTES.CREATE_PROPERTY} className={pillClass}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Post Property
+              </Link>
+              <button type="button" onClick={handleLogout} className={ghostClass}>
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to={ROUTES.LOGIN} className={linkClass}>
+                Login
+              </NavLink>
+              <Link to={ROUTES.REGISTER} className={pillClass}>
+                Register
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -102,7 +94,7 @@ const Navbar = () => {
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
-          className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
+          className="rounded-lg p-2 text-white transition-colors hover:bg-white/10 md:hidden"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -110,7 +102,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-slate-200 bg-white px-4 py-3 md:hidden">
+        <div className="border-t border-blue-500/50 bg-blue-700 px-4 py-3 md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((link) => (
               <NavLink
@@ -120,8 +112,8 @@ const Navbar = () => {
                 end={link.to === ROUTES.HOME}
                 className={({ isActive }) =>
                   cn(
-                    'rounded-lg px-3 py-2 text-sm font-medium',
-                    isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50',
+                    'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    isActive ? 'bg-white/15 text-white' : 'text-blue-100 hover:bg-white/10',
                   )
                 }
               >
@@ -130,13 +122,13 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3">
+          <div className="mt-3 flex flex-col gap-2 border-t border-blue-500/50 pt-3">
             {isAuthenticated ? (
               <>
                 <Link
                   to={ROUTES.CREATE_PROPERTY}
                   onClick={close}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 hover:bg-white/25"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
                   Post Property
@@ -144,7 +136,7 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Logout
@@ -152,17 +144,17 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link
+                <NavLink
                   to={ROUTES.LOGIN}
                   onClick={close}
-                  className="rounded-lg border border-slate-200 px-4 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg px-4 py-2.5 text-center text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white"
                 >
                   Login
-                </Link>
+                </NavLink>
                 <Link
                   to={ROUTES.REGISTER}
                   onClick={close}
-                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-blue-700"
+                  className="rounded-lg bg-white/15 px-4 py-2.5 text-center text-sm font-semibold text-white ring-1 ring-inset ring-white/25 hover:bg-white/25"
                 >
                   Register
                 </Link>
