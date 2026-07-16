@@ -113,7 +113,7 @@ const Section = ({
 }) => (
   <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
     <div className="flex items-start gap-3">
-      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg bg-blue-50 text-sm font-bold text-blue-600">
+      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg bg-emerald-50 text-sm font-bold text-emerald-600">
         {step}
       </span>
       <div>

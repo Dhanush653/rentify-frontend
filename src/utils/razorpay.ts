@@ -49,7 +49,7 @@ export const openRazorpayCheckout = ({
         name: 'Rentify',
         description,
         prefill: prefillContact ? { contact: prefillContact } : undefined,
-        theme: { color: '#2563eb' },
+        theme: { color: '#059669' },
         handler: (response) => resolve(response),
         modal: { ondismiss: () => reject(new PaymentError('Payment cancelled.')) },
       })

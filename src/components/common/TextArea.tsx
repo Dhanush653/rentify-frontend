@@ -19,7 +19,7 @@ const TextArea = ({ label, error, className, id, ...props }: TextAreaProps) => (
       rows={4}
       {...props}
       className={cn(
-        'rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500',
+        'rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-emerald-500',
         error && 'border-red-500',
         className,
       )}

@@ -55,9 +55,9 @@ const MyPropertyCard = ({ property, onDelete }: MyPropertyCardProps) => {
         <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm">
           {humanizeEnum(property.propertyType)}
         </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold text-white shadow-md">
+        <span className="absolute bottom-3 left-3 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white shadow-md">
           {formatCurrency(property.rent)}
-          <span className="font-normal text-blue-100"> /mo</span>
+          <span className="font-normal text-emerald-100"> /mo</span>
         </span>
       </div>
 
@@ -97,7 +97,7 @@ const MyPropertyCard = ({ property, onDelete }: MyPropertyCardProps) => {
           </Link>
           <Link
             to={buildPath(ROUTES.EDIT_PROPERTY, { id: property.id })}
-            className={cn(actionClass, 'bg-blue-50 text-blue-700 hover:bg-blue-100')}
+            className={cn(actionClass, 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100')}
           >
             <Pencil className="h-4 w-4" aria-hidden="true" />
             Edit

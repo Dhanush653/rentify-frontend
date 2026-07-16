@@ -62,7 +62,7 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
               className={cn(
                 'h-16 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition sm:h-20 sm:w-28',
                 index === activeIndex
-                  ? 'border-blue-600'
+                  ? 'border-emerald-600'
                   : 'border-transparent opacity-70 hover:opacity-100',
               )}
               aria-label={`View image ${index + 1}`}

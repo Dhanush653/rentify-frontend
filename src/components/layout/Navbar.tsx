@@ -14,25 +14,32 @@ const authedLinks = [
 
 const guestLinks = [{ to: ROUTES.HOME, label: 'Home' }]
 
+// Desktop links get a small emerald underline indicator when active.
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'text-sm font-medium transition-colors',
-    isActive ? 'text-white' : 'text-blue-100 hover:text-white',
+    'relative py-1 text-sm font-medium transition-colors',
+    'after:absolute after:-bottom-0.5 after:left-0 after:h-0.5 after:rounded-full after:bg-emerald-400 after:transition-all',
+    isActive
+      ? 'text-white after:w-full'
+      : 'text-slate-300 after:w-0 hover:text-white hover:after:w-full',
   )
 
-// Glassy pill button that stays "continuous" with the blue header.
-const pillClass =
-  'inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-4 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 transition-colors hover:bg-white/25'
+// Solid emerald CTA — the one loud element on the dark bar.
+const ctaClass =
+  'inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-emerald-500/30 transition-colors hover:bg-emerald-400'
 
 const ghostClass =
-  'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-blue-100 transition-colors hover:bg-white/10 hover:text-white'
+  'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white'
 
 const Brand = ({ onClick }: { onClick?: () => void }) => (
   <Link to={ROUTES.HOME} onClick={onClick} className="flex items-center gap-2.5">
-    <span className="grid h-9 w-9 place-items-center rounded-lg bg-white/15 text-white ring-1 ring-inset ring-white/25">
+    <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-md shadow-emerald-500/30">
       <Building2 className="h-5 w-5" aria-hidden="true" />
     </span>
-    <span className="text-lg font-extrabold tracking-tight text-white">{APP_NAME}</span>
+    <span className="text-lg font-extrabold tracking-tight text-white">
+      {APP_NAME}
+      <span className="text-emerald-400">.</span>
+    </span>
   </Link>
 )
 
@@ -53,7 +60,7 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-blue-500/50 bg-blue-600">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/90">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Brand onClick={close} />
 
@@ -65,25 +72,31 @@ const Navbar = () => {
             </NavLink>
           ))}
 
+          {/* Guests see the CTA too — it just routes them to login first. */}
+          <Link to={isAuthenticated ? ROUTES.CREATE_PROPERTY : ROUTES.LOGIN} className={ctaClass}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Post Property
+          </Link>
+
           {isAuthenticated ? (
-            <>
-              <Link to={ROUTES.CREATE_PROPERTY} className={pillClass}>
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                Post Property
-              </Link>
-              <button type="button" onClick={handleLogout} className={ghostClass}>
-                <LogOut className="h-4 w-4" aria-hidden="true" />
-                Logout
-              </button>
-            </>
+            <button type="button" onClick={handleLogout} className={ghostClass}>
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Logout
+            </button>
           ) : (
             <>
-              <NavLink to={ROUTES.LOGIN} className={linkClass}>
+              <NavLink
+                to={ROUTES.LOGIN}
+                className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 ring-1 ring-inset ring-white/20 transition-colors hover:bg-white/10 hover:text-white"
+              >
                 Login
               </NavLink>
-              <Link to={ROUTES.REGISTER} className={pillClass}>
+              <NavLink
+                to={ROUTES.REGISTER}
+                className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 ring-1 ring-inset ring-white/20 transition-colors hover:bg-white/10 hover:text-white"
+              >
                 Register
-              </Link>
+              </NavLink>
             </>
           )}
         </div>
@@ -102,7 +115,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-blue-500/50 bg-blue-700 px-4 py-3 md:hidden">
+        <div className="border-t border-white/10 bg-slate-900 px-4 py-3 md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((link) => (
               <NavLink
@@ -113,7 +126,9 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   cn(
                     'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive ? 'bg-white/15 text-white' : 'text-blue-100 hover:bg-white/10',
+                    isActive
+                      ? 'bg-emerald-500/15 text-emerald-300'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white',
                   )
                 }
               >
@@ -122,42 +137,42 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 border-t border-blue-500/50 pt-3">
+          <div className="mt-3 flex flex-col gap-2 border-t border-white/10 pt-3">
+            {/* Guests see the CTA too — it just routes them to login first. */}
+            <Link
+              to={isAuthenticated ? ROUTES.CREATE_PROPERTY : ROUTES.LOGIN}
+              onClick={close}
+              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-500/30 hover:bg-emerald-400"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Post Property
+            </Link>
+
             {isAuthenticated ? (
-              <>
-                <Link
-                  to={ROUTES.CREATE_PROPERTY}
-                  onClick={close}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 hover:bg-white/25"
-                >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  Post Property
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white"
-                >
-                  <LogOut className="h-4 w-4" aria-hidden="true" />
-                  Logout
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+              >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                Logout
+              </button>
             ) : (
               <>
                 <NavLink
                   to={ROUTES.LOGIN}
                   onClick={close}
-                  className="rounded-lg px-4 py-2.5 text-center text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white"
+                  className="rounded-full px-4 py-2.5 text-center text-sm font-medium text-slate-300 ring-1 ring-inset ring-white/20 hover:bg-white/10 hover:text-white"
                 >
                   Login
                 </NavLink>
-                <Link
+                <NavLink
                   to={ROUTES.REGISTER}
                   onClick={close}
-                  className="rounded-lg bg-white/15 px-4 py-2.5 text-center text-sm font-semibold text-white ring-1 ring-inset ring-white/25 hover:bg-white/25"
+                  className="rounded-full px-4 py-2.5 text-center text-sm font-medium text-slate-300 ring-1 ring-inset ring-white/20 hover:bg-white/10 hover:text-white"
                 >
                   Register
-                </Link>
+                </NavLink>
               </>
             )}
           </div>

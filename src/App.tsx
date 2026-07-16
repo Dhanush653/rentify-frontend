@@ -16,7 +16,7 @@ const App = () => (
           position="top-center"
           toastOptions={{
             style: { borderRadius: '10px', fontSize: '14px' },
-            success: { iconTheme: { primary: '#2563eb', secondary: '#fff' } },
+            success: { iconTheme: { primary: '#059669', secondary: '#fff' } },
           }}
         />
       </BrowserRouter>

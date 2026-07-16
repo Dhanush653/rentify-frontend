@@ -74,7 +74,7 @@ const LoginPage = () => {
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="mb-6 flex flex-col items-center text-center">
-          <span className="grid h-11 w-11 place-items-center rounded-lg bg-blue-600 text-white">
+          <span className="grid h-11 w-11 place-items-center rounded-lg bg-emerald-600 text-white">
             <Building2 className="h-5 w-5" aria-hidden="true" />
           </span>
           <h1 className="mt-3 text-xl font-bold text-slate-900">Welcome back</h1>
@@ -138,7 +138,7 @@ const LoginPage = () => {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Don&apos;t have an account?{' '}
-          <RouterLink to={ROUTES.REGISTER} className="font-semibold text-blue-600 hover:underline">
+          <RouterLink to={ROUTES.REGISTER} className="font-semibold text-emerald-600 hover:underline">
             Create one
           </RouterLink>
         </p>

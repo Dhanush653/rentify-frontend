@@ -5,11 +5,13 @@ import {
   Bath,
   BedDouble,
   Car,
+  Check,
   MapPin,
   Route,
   ShowerHead,
   Sofa,
   Store,
+  X,
 } from 'lucide-react'
 import { ROUTES } from '@/utils/constants'
 import { buildPath, formatCurrency, humanizeEnum } from '@/utils/helpers'
@@ -24,6 +26,14 @@ export const FALLBACK_IMAGE =
   'data:image/svg+xml;charset=UTF-8,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#f1f5f9"/><text x="50%" y="50%" fill="#94a3b8" font-family="sans-serif" font-size="16" text-anchor="middle" dominant-baseline="middle">No image</text></svg>',
+  )
+
+/** Compact ✅ / ❌ indicator appended to a chip label. */
+const YesNo = ({ value }: { value: boolean }) =>
+  value ? (
+    <Check className="h-3.5 w-3.5 text-emerald-600" aria-label="Yes" />
+  ) : (
+    <X className="h-3.5 w-3.5 text-red-500" aria-label="No" />
   )
 
 /** One summary chip in the card's feature row. */
@@ -68,16 +78,19 @@ const SummaryChips = ({ property }: { property: PropertyListItem }) => {
         </Chip>,
       )
   } else {
-    if (property.washroomAvailable)
+    // Shops show Washroom and Main Road as explicit yes/no indicators.
+    if (property.washroomAvailable != null)
       chips.push(
         <Chip key="washroom" icon={ShowerHead}>
           Washroom
+          <YesNo value={property.washroomAvailable} />
         </Chip>,
       )
-    if (property.mainRoadFacing)
+    if (property.mainRoadFacing != null)
       chips.push(
         <Chip key="mainroad" icon={Route}>
           Main Road
+          <YesNo value={property.mainRoadFacing} />
         </Chip>,
       )
     if (property.cornerShop)
@@ -123,14 +136,14 @@ const PropertyCard = ({ property }: PropertyCardProps) => (
       <span className="absolute left-3 top-3 rounded-md bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm">
         {humanizeEnum(property.propertyType)}
       </span>
-      <span className="absolute bottom-3 left-3 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold text-white shadow-md">
+      <span className="absolute bottom-3 left-3 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white shadow-md">
         {formatCurrency(property.rent)}
-        <span className="font-normal text-blue-100"> /mo</span>
+        <span className="font-normal text-emerald-100"> /mo</span>
       </span>
     </div>
 
     <div className="flex flex-1 flex-col p-5">
-      <h3 className="truncate text-lg font-semibold text-slate-900 transition-colors group-hover:text-blue-600">
+      <h3 className="truncate text-lg font-semibold text-slate-900 transition-colors group-hover:text-emerald-600">
         {property.title}
       </h3>
       <div className="mt-1 flex items-center gap-1 text-slate-500">
@@ -145,7 +158,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => (
       <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
         <span className="text-sm font-medium text-slate-500">View details</span>
         <ArrowRight
-          className="h-4 w-4 text-blue-600 transition-transform group-hover:translate-x-0.5"
+          className="h-4 w-4 text-emerald-600 transition-transform group-hover:translate-x-0.5"
           aria-hidden="true"
         />
       </div>

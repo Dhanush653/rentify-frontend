@@ -8,7 +8,7 @@ const NotFoundPage = () => (
   <div className="flex flex-col items-center gap-4 py-24 text-center">
     <Seo title="Page Not Found | Rentify" />
 
-    <span className="grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-blue-600">
+    <span className="grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-600">
       <MapPinOff className="h-8 w-8" aria-hidden="true" />
     </span>
     <p className="text-5xl font-extrabold tracking-tight text-slate-900">404</p>

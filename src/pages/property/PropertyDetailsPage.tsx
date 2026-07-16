@@ -38,7 +38,7 @@ const Card = ({ title, children }: { title: string; children: ReactNode }) => (
 /** A single stat in the quick-specs strip. */
 const Spec = ({ icon: Icon, value, label }: { icon: LucideIcon; value: ReactNode; label: string }) => (
   <div className="flex items-center gap-3 px-4 py-3">
-    <Icon className="h-5 w-5 flex-shrink-0 text-blue-600" aria-hidden="true" />
+    <Icon className="h-5 w-5 flex-shrink-0 text-emerald-600" aria-hidden="true" />
     <div className="min-w-0">
       <p className="truncate text-sm font-semibold text-slate-900">{value}</p>
       <p className="text-xs text-slate-500">{label}</p>
@@ -153,7 +153,7 @@ const PropertyDetailsPage = () => {
 
       {/* Title */}
       <div className="flex flex-col gap-2">
-        <span className="w-fit rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+        <span className="w-fit rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
           {humanizeEnum(property.propertyType)}
         </span>
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
@@ -252,7 +252,7 @@ const PropertyDetailsPage = () => {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-slate-900">{property.ownerName}</p>
-                <a href={`tel:${property.ownerPhone}`} className="text-xs text-blue-600 hover:underline">
+                <a href={`tel:${property.ownerPhone}`} className="text-xs text-emerald-600 hover:underline">
                   {property.ownerPhone}
                 </a>
               </div>

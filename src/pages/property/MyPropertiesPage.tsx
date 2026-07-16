@@ -109,22 +109,10 @@ const MyPropertiesPage = () => {
       />
 
       <section className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">My Properties</h1>
-            {!loading && !error && properties.length > 0 && (
-              <p className="mt-1 text-sm text-slate-500">{countLabel}</p>
-            )}
-          </div>
-
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">My Properties</h1>
           {!loading && !error && properties.length > 0 && (
-            <Button
-              variant="contained"
-              startIcon={<Plus size={16} />}
-              onClick={() => navigate(ROUTES.CREATE_PROPERTY)}
-            >
-              Post Property
-            </Button>
+            <p className="mt-1 text-sm text-slate-500">{countLabel}</p>
           )}
         </div>
 

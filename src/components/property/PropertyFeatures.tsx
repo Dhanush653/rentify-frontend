@@ -71,7 +71,7 @@ const FeatureSection = ({
   <Card elevation={0} sx={{ borderRadius: '1rem', border: '1px solid #e2e8f0' }}>
     <CardContent sx={{ p: { xs: 2.5, sm: 3 }, '&:last-child': { pb: { xs: 2.5, sm: 3 } } }}>
       <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900">
-        <Icon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+        <Icon className="h-5 w-5 text-emerald-600" aria-hidden="true" />
         {title}
       </h2>
       {children}

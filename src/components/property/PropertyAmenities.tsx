@@ -47,14 +47,14 @@ const PropertyAmenities = ({ features }: PropertyAmenitiesProps) => (
           className={cn(
             'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium',
             available
-              ? 'border-blue-200 bg-blue-50 text-blue-700'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
               : 'border-slate-200 bg-slate-50 text-slate-400',
           )}
         >
           <Icon className="h-4 w-4" aria-hidden="true" />
           {label}
           {available ? (
-            <Check className="h-4 w-4 text-blue-600" aria-hidden="true" />
+            <Check className="h-4 w-4 text-emerald-600" aria-hidden="true" />
           ) : (
             <X className="h-4 w-4 text-slate-300" aria-hidden="true" />
           )}

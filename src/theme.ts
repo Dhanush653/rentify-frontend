@@ -1,12 +1,12 @@
 import { createTheme } from '@mui/material/styles'
 
 /**
- * App-wide MUI theme. A single blue accent on a white / slate-neutral surface,
+ * App-wide MUI theme. A single emerald accent on a white / slate-neutral surface,
  * Inter type, restrained radii and shadows — one consistent, professional look.
  */
 export const theme = createTheme({
   palette: {
-    primary: { main: '#2563eb', dark: '#1d4ed8', light: '#3b82f6' },
+    primary: { main: '#059669', dark: '#047857', light: '#10b981' },
     background: { default: '#f8fafc', paper: '#ffffff' },
     text: { primary: '#0f172a', secondary: '#64748b' },
     divider: '#e2e8f0',
