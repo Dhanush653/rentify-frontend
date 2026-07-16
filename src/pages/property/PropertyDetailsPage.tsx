@@ -6,10 +6,13 @@ import {
   Bath,
   BedDouble,
   Eye,
+  Layers,
   MapPin,
   MessageCircle,
   Phone,
+  Route,
   Ruler,
+  ShowerHead,
   Sofa,
   User,
   type LucideIcon,
@@ -18,7 +21,6 @@ import { propertyApi } from '@/api/propertyApi'
 import ErrorState from '@/components/common/ErrorState'
 import Seo from '@/components/common/Seo'
 import PropertyDetailsSkeleton from '@/components/skeletons/PropertyDetailsSkeleton'
-import PropertyAmenities from '@/components/property/PropertyAmenities'
 import PropertyFeatures from '@/components/property/PropertyFeatures'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyMap from '@/components/property/PropertyMap'
@@ -97,6 +99,42 @@ const PropertyDetailsPage = () => {
   }
 
   const { features } = property
+  const isHouse = property.propertyType === 'HOUSE'
+
+  // Quick-specs strip differs per property type; missing values fall back to —.
+  const specs = isHouse
+    ? [
+        { icon: BedDouble, value: features.bedrooms ?? '—', label: 'Bedrooms' },
+        { icon: Bath, value: features.bathrooms ?? '—', label: 'Bathrooms' },
+        {
+          icon: Ruler,
+          value: features.builtUpArea != null ? `${features.builtUpArea} sq.ft` : '—',
+          label: 'Built-up',
+        },
+        {
+          icon: Sofa,
+          value: features.furnishingType ? humanizeEnum(features.furnishingType) : '—',
+          label: 'Furnishing',
+        },
+      ]
+    : [
+        {
+          icon: Ruler,
+          value: features.builtUpArea != null ? `${features.builtUpArea} sq.ft` : '—',
+          label: 'Built-up',
+        },
+        { icon: Layers, value: features.floorNumber ?? '—', label: 'Floor' },
+        {
+          icon: ShowerHead,
+          value: features.washroomAvailable != null ? (features.washroomAvailable ? 'Yes' : 'No') : '—',
+          label: 'Washroom',
+        },
+        {
+          icon: Route,
+          value: features.mainRoadFacing != null ? (features.mainRoadFacing ? 'Yes' : 'No') : '—',
+          label: 'Main Road',
+        },
+      ]
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,10 +174,9 @@ const PropertyDetailsPage = () => {
 
           {/* Quick specs */}
           <div className="grid grid-cols-2 divide-slate-200 rounded-2xl border border-slate-200 bg-white sm:grid-cols-4 sm:divide-x">
-            <Spec icon={BedDouble} value={features.bedrooms} label="Bedrooms" />
-            <Spec icon={Bath} value={features.bathrooms} label="Bathrooms" />
-            <Spec icon={Ruler} value={`${features.builtUpArea} sq.ft`} label="Built-up" />
-            <Spec icon={Sofa} value={humanizeEnum(features.furnishingType)} label="Furnishing" />
+            {specs.map((spec) => (
+              <Spec key={spec.label} icon={spec.icon} value={spec.value} label={spec.label} />
+            ))}
           </div>
 
           <Card title="Description">
@@ -148,13 +185,8 @@ const PropertyDetailsPage = () => {
             </p>
           </Card>
 
-          <Card title="Property Features">
-            <PropertyFeatures features={property.features} />
-          </Card>
-
-          <Card title="Amenities">
-            <PropertyAmenities features={property.features} />
-          </Card>
+          {/* Grouped feature sections (common / house or shop / parking / amenities) */}
+          <PropertyFeatures features={property.features} propertyType={property.propertyType} />
 
           <Card title="Location">
             <PropertyMap

@@ -39,40 +39,41 @@ const DEFAULTS: FormValues = {
   latitude: 0,
   longitude: 0,
   features: {
-    bedrooms: 1,
-    bathrooms: 1,
-    balconies: 0,
+    // Common
     builtUpArea: 0,
     floorNumber: 0,
     totalFloors: 0,
+    propertyAge: 0,
     carParking: false,
     bikeParking: false,
-    furnishingType: 'UNFURNISHED',
-    preferredTenant: 'ANY',
     waterSupply: 'CORPORATION',
-    propertyAge: 0,
     lift: false,
     powerBackup: false,
     wifi: false,
     airConditioner: false,
     security: false,
     cctv: false,
+    // House-only
+    bedrooms: 1,
+    bathrooms: 1,
+    balconies: 0,
+    furnishingType: 'UNFURNISHED',
+    preferredTenant: 'ANY',
     petFriendly: false,
+    // Shop-only
+    washroomAvailable: false,
+    mainRoadFacing: false,
+    cornerShop: false,
   },
   expiresAt: '',
 }
 
-const BASIC_NUMBER_FIELDS = [
-  { name: 'features.bedrooms', label: 'Bedrooms' },
-  { name: 'features.bathrooms', label: 'Bathrooms' },
-  { name: 'features.balconies', label: 'Balconies' },
+/* Common to every property type */
+const COMMON_NUMBER_FIELDS = [
   { name: 'features.builtUpArea', label: 'Built Up Area (sq.ft)' },
-  { name: 'features.propertyAge', label: 'Property Age (years)' },
-] as const
-
-const BUILDING_NUMBER_FIELDS = [
   { name: 'features.floorNumber', label: 'Floor Number' },
   { name: 'features.totalFloors', label: 'Total Floors' },
+  { name: 'features.propertyAge', label: 'Property Age (years)' },
 ] as const
 
 const AMENITY_SWITCHES = [
@@ -82,7 +83,20 @@ const AMENITY_SWITCHES = [
   { name: 'features.airConditioner', label: 'Air Conditioner' },
   { name: 'features.security', label: 'Security' },
   { name: 'features.cctv', label: 'CCTV' },
-  { name: 'features.petFriendly', label: 'Pet Friendly' },
+] as const
+
+/* Shown only when propertyType === HOUSE */
+const HOUSE_NUMBER_FIELDS = [
+  { name: 'features.bedrooms', label: 'Bedrooms' },
+  { name: 'features.bathrooms', label: 'Bathrooms' },
+  { name: 'features.balconies', label: 'Balconies' },
+] as const
+
+/* Shown only when propertyType === SHOP */
+const SHOP_SWITCHES = [
+  { name: 'features.washroomAvailable', label: 'Washroom Available' },
+  { name: 'features.mainRoadFacing', label: 'Main Road Facing' },
+  { name: 'features.cornerShop', label: 'Corner Shop' },
 ] as const
 
 /** A numbered card wrapping one logical group of fields. */
@@ -123,6 +137,7 @@ const EnumSelect = ({
   options,
   error,
   placeholder,
+  required,
 }: {
   control: Control<FormValues>
   name: FieldPath<FormValues>
@@ -130,10 +145,12 @@ const EnumSelect = ({
   options: readonly string[]
   error?: string
   placeholder?: string
+  required?: string
 }) => (
   <Controller
     control={control}
     name={name}
+    rules={required ? { required } : undefined}
     render={({ field }) => (
       <TextField
         select
@@ -218,6 +235,9 @@ const PropertyForm = ({
   const longitude = useWatch({ control, name: 'longitude' })
   const coords = latitude && longitude ? { lat: latitude, lng: longitude } : null
 
+  // Drives the dynamic house-only / shop-only field groups.
+  const propertyType = useWatch({ control, name: 'propertyType' })
+
   const featureError = (name: string): string | undefined => {
     const key = name.split('.')[1] as keyof PropertyFeatures
     return errors.features?.[key]?.message
@@ -257,6 +277,7 @@ const PropertyForm = ({
             label="Property Type"
             options={PROPERTY_TYPES}
             placeholder="Select type"
+            required="Please select a property type"
             error={errors.propertyType?.message}
           />
         </div>
@@ -341,7 +362,7 @@ const PropertyForm = ({
           <div>
             <GroupLabel>Basic</GroupLabel>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {BASIC_NUMBER_FIELDS.map((field) => (
+              {COMMON_NUMBER_FIELDS.map((field) => (
                 <TextField
                   key={field.name}
                   {...register(field.name, { valueAsNumber: true })}
@@ -353,24 +374,13 @@ const PropertyForm = ({
                   helperText={featureError(field.name)}
                 />
               ))}
-            </div>
-          </div>
-
-          <div>
-            <GroupLabel>Building</GroupLabel>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {BUILDING_NUMBER_FIELDS.map((field) => (
-                <TextField
-                  key={field.name}
-                  {...register(field.name, { valueAsNumber: true })}
-                  label={field.label}
-                  type="number"
-                  fullWidth
-                  size="small"
-                  error={Boolean(featureError(field.name))}
-                  helperText={featureError(field.name)}
-                />
-              ))}
+              <EnumSelect
+                control={control}
+                name="features.waterSupply"
+                label="Water Supply"
+                options={WATER_SUPPLY_TYPES}
+                error={featureError('features.waterSupply')}
+              />
             </div>
           </div>
 
@@ -379,33 +389,6 @@ const PropertyForm = ({
             <div className="flex flex-wrap gap-x-8">
               <SwitchField control={control} name="features.carParking" label="Car Parking" />
               <SwitchField control={control} name="features.bikeParking" label="Bike Parking" />
-            </div>
-          </div>
-
-          <div>
-            <GroupLabel>Configuration</GroupLabel>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <EnumSelect
-                control={control}
-                name="features.furnishingType"
-                label="Furnishing Type"
-                options={FURNISHING_TYPES}
-                error={featureError('features.furnishingType')}
-              />
-              <EnumSelect
-                control={control}
-                name="features.preferredTenant"
-                label="Preferred Tenant"
-                options={PREFERRED_TENANTS}
-                error={featureError('features.preferredTenant')}
-              />
-              <EnumSelect
-                control={control}
-                name="features.waterSupply"
-                label="Water Supply"
-                options={WATER_SUPPLY_TYPES}
-                error={featureError('features.waterSupply')}
-              />
             </div>
           </div>
 
@@ -422,6 +405,65 @@ const PropertyForm = ({
               ))}
             </div>
           </div>
+
+          {/* House-only fields */}
+          {propertyType === 'HOUSE' && (
+            <div>
+              <GroupLabel>House Details</GroupLabel>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {HOUSE_NUMBER_FIELDS.map((field) => (
+                  <TextField
+                    key={field.name}
+                    {...register(field.name, { valueAsNumber: true })}
+                    label={field.label}
+                    type="number"
+                    fullWidth
+                    size="small"
+                    error={Boolean(featureError(field.name))}
+                    helperText={featureError(field.name)}
+                  />
+                ))}
+                <EnumSelect
+                  control={control}
+                  name="features.furnishingType"
+                  label="Furnishing Type"
+                  options={FURNISHING_TYPES}
+                  error={featureError('features.furnishingType')}
+                />
+                <EnumSelect
+                  control={control}
+                  name="features.preferredTenant"
+                  label="Preferred Tenant"
+                  options={PREFERRED_TENANTS}
+                  error={featureError('features.preferredTenant')}
+                />
+                <div className="flex items-center">
+                  <SwitchField
+                    control={control}
+                    name="features.petFriendly"
+                    label="Pet Friendly"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Shop-only fields */}
+          {propertyType === 'SHOP' && (
+            <div>
+              <GroupLabel>Shop Details</GroupLabel>
+              <div className="flex flex-wrap gap-x-8">
+                {SHOP_SWITCHES.map((field) => (
+                  <SwitchField
+                    key={field.name}
+                    control={control}
+                    name={field.name}
+                    label={field.label}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Section>
 

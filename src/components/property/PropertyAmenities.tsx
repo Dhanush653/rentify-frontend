@@ -1,11 +1,8 @@
 import {
   AirVent,
   ArrowUpDown,
-  Bike,
   Camera,
-  Car,
   Check,
-  PawPrint,
   PlugZap,
   Shield,
   Wifi,
@@ -25,16 +22,14 @@ interface AmenityDef {
   icon: LucideIcon
 }
 
+/** Common amenities only — parking and pet-friendly are shown in their own sections. */
 const AMENITIES: AmenityDef[] = [
-  { key: 'carParking', label: 'Car Parking', icon: Car },
-  { key: 'bikeParking', label: 'Bike Parking', icon: Bike },
   { key: 'lift', label: 'Lift', icon: ArrowUpDown },
   { key: 'powerBackup', label: 'Power Backup', icon: PlugZap },
   { key: 'wifi', label: 'WiFi', icon: Wifi },
   { key: 'airConditioner', label: 'Air Conditioner', icon: AirVent },
   { key: 'security', label: 'Security', icon: Shield },
   { key: 'cctv', label: 'CCTV', icon: Camera },
-  { key: 'petFriendly', label: 'Pet Friendly', icon: PawPrint },
 ]
 
 /**

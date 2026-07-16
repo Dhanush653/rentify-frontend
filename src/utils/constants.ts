@@ -1,3 +1,5 @@
+import type { PropertyFeatures } from '@/types/property'
+
 export const APP_NAME = 'Rentify'
 
 /** Client-side route paths. Keep in sync with routes/AppRoutes.tsx. */
@@ -20,7 +22,7 @@ export const API_ROUTES = {
     REGISTER: '/auth/register',
   },
   PROPERTIES: '/properties',
-  MY_PROPERTIES: '/properties/me',
+  MY_PROPERTIES: '/properties/my-properties',
   USERS: '/users',
   PROFILE: '/users/me',
 } as const
@@ -41,6 +43,42 @@ export const FURNISHING_TYPES = ['UNFURNISHED', 'SEMI_FURNISHED', 'FULLY_FURNISH
 export const PREFERRED_TENANTS = ['ANY', 'FAMILY', 'BACHELOR'] as const
 
 export const WATER_SUPPLY_TYPES = ['CORPORATION', 'BOREWELL', 'BOTH'] as const
+
+/**
+ * Which `features.*` keys apply to which property type. Used to decide what
+ * gets submitted (and shown) — house-only keys are never sent for shops and
+ * vice versa.
+ */
+export const COMMON_FEATURE_KEYS = [
+  'builtUpArea',
+  'floorNumber',
+  'totalFloors',
+  'propertyAge',
+  'carParking',
+  'bikeParking',
+  'waterSupply',
+  'lift',
+  'powerBackup',
+  'wifi',
+  'airConditioner',
+  'security',
+  'cctv',
+] as const satisfies readonly (keyof PropertyFeatures)[]
+
+export const HOUSE_FEATURE_KEYS = [
+  'bedrooms',
+  'bathrooms',
+  'balconies',
+  'furnishingType',
+  'preferredTenant',
+  'petFriendly',
+] as const satisfies readonly (keyof PropertyFeatures)[]
+
+export const SHOP_FEATURE_KEYS = [
+  'washroomAvailable',
+  'mainRoadFacing',
+  'cornerShop',
+] as const satisfies readonly (keyof PropertyFeatures)[]
 
 /** Bounds for the Home page rent range slider. */
 export const RENT_RANGE = { MIN: 0, MAX: 100000, STEP: 1000 } as const
